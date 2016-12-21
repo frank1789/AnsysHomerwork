@@ -1,6 +1,6 @@
-AnsysHomerwork
+# AnsysHomerwork
 
-Collection of all exercize
+Collection of all exercize develop in ###APDL in ###Ansys
 
 <ul>
 	<li>exercize n. 1</li> 
@@ -19,5 +19,5 @@ Collection of all exercize
 were is present in the name's file:
 <ul>
  <li>"img"  - the script automatize the generation of image file</li>
- <li>"modify" - the script ave change</li>
+ <li>"modify" - the script have little change repsect original</li>
 </ul>
