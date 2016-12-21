@@ -1,6 +1,6 @@
 # AnsysHomerwork
 
-Collection of all exercize develop in ###APDL in ###Ansys
+Collection of all exercize develop in APDL in Ansys
 
 <ul>
 	<li>exercize n. 1</li> 
