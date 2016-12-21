@@ -1,0 +1,281 @@
+!**********************   
+!PROBLEM: HOMEWORK 1 *   
+!**********************
+
+FINISH
+/CLEAR, START, NEW
+/TITLE, HOMERWORK 1
+/EFACET,4
+/GFILE,2400
+/PLOPTS,DATE,0    
+! >>>>> PARAMETRI MODELLO <<<<< 
+*SET, bottom_chord, 4000
+*SET, top_chord, 4000   
+*SET, h_struts, 4000
+*SET, o_struts, 3500  
+*SET, sez_one, 1000  !sezione bottom_chord,top_chord,struts (mm^2)  
+*SET, sez_two, 600  !sezione sway_bracing (mm^2)
+*SET, sez_three, 400  !sezione lateral_bracing (mm^2)   
+
+! >>>>> PROPRIETÀ’ DEL MATERIALE <<<<<   
+*SET,E_Young, 210000 ! modulo di Young , MPa
+*SET,ni,0.3          ! coefficiente di Poisson  
+
+! >>>>> CONDIZIONI DI CARICO <<<<<  
+*SET,F, (20000*(bottom_chord/1000)*6)/7 !carico distribuito, N/mm
+
+/PREP7  
+ET,1,180
+ET,2,180
+ET,3,180
+R,1,sez_one 
+R,2,sez_two 
+R,3,sez_three   
+MP,EX,1,E_Young 
+MP,PRXY,1,ni
+N,1,0,0,0   
+N,2,bottom_chord,0,0
+N,3,bottom_chord*2,0,0  
+N,4,bottom_chord*3,0,0  
+N,5,bottom_chord*4,0,0  
+N,6,bottom_chord*5,0,0  
+N,7,bottom_chord*6,0,0  
+N,8,bottom_chord,h_struts,0 
+N,9,bottom_chord*2,h_struts,0   
+N,10,bottom_chord*3,h_struts,0  
+N,11,bottom_chord*4,h_struts,0  
+N,12,bottom_chord*5,h_struts,0  
+N,13,0,0,o_struts   
+N,14,bottom_chord,0,o_struts
+N,15,bottom_chord*2,0,o_struts  
+N,16,bottom_chord*3,0,o_struts  
+N,17,bottom_chord*4,0,o_struts  
+N,18,bottom_chord*5,0,o_struts  
+N,19,bottom_chord*6,0,o_struts  
+N,20,bottom_chord,h_struts,o_struts 
+N,21,bottom_chord*2,h_struts,o_struts   
+N,22,bottom_chord*3,h_struts,o_struts   
+N,23,bottom_chord*4,h_struts,o_struts   
+N,24,bottom_chord*5,h_struts,o_struts
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, Node, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+
+SAVE
+
+!>>>> ELEMENT <<<<
+TYPE, 1
+Real, 1
+Mat, 1
+
+E,1,2
+E,2,3     
+E,3,4   
+E,4,5   
+E,5,6   
+E,6,7
+E,8,9
+E,9,10
+E,10,11
+E,11,12
+E,13,14  
+E,14,15 
+E,15,16
+E,16,17 
+E,17,18 
+E,18,19
+E,20,21
+E,21,22
+E,22,23
+E,23,24
+E,1,13
+E,2,14
+E,3,15
+E,4,16
+E,5,17
+E,6,18
+E,7,19
+E,1,8
+E,12,7
+E,24,19
+E,13,20
+E,2,8
+E,3,9
+E,4,10
+E,5,11
+E,6,12
+E,14,20
+E,15,21
+E,16,22
+E,17,23
+E,18,24
+E,8,20
+E,9,21
+E,10,22
+E,11,23
+E,12,24
+
+TYPE, 2
+Real, 2
+Mat, 1
+
+E,8,21
+E,9,22
+E,10,23
+E,11,24
+E,20,9
+E,21,10
+E,22,11
+E,23,12
+ 
+TYPE, 3
+Real, 2
+Mat, 1
+
+E,3,8
+E,4,9
+E,4,11
+E,5,12
+E,20,15
+E,21,16
+E,16,23
+E,17,24
+
+SAVE
+
+!>>>> CONSTRAINT <<<<
+D,1,ux,0
+D,1,uy,0
+D,7,uy,0
+D,13,ux,0
+D,13,uy,0
+D,19,uy,0
+D,all,uz,0
+
+!>>>> FORCE <<<<
+F,1,fy, -F
+F,2,fy, -F
+F,3,fy, -F
+F,4,fy, -F
+F,5,fy, -F
+F,6,fy, -F
+F,7,fy, -F
+F,13,fy, -F
+F,14,fy, -F
+F,15,fy, -F
+F,16,fy, -F
+F,17,fy, -F
+F,18,fy, -F
+F,19,fy, -F
+
+SAVE
+
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, GeometryLoad, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15 
+
+!>>>> SOLUTION <<<<
+/SOLU
+NLGEOM,ON
+SOLCONTROL,ON
+TIME,1
+PIVCHECK,OFF
+SOLVE
+
+!>>>> POST-PROCESS <<<<
+/POST1
+
+PLDISP,1
+PRNSOL,U,COMP
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, Displacement, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15 
+
+ETABLE,AXIALFORCE,SMISC,1
+ETABLE,AXIALSTRESS,LS,1
+
+PLETAB,AXIALFORCE
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, AxialForce, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15 
+PLETAB,AXIALSTRESS
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, AxialStress, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15 
+PRETAB,AXIALFORCE,AXIALSTRESS
+PRRSOL,F
+
+!*************************
+!SECOND PART HOMEWORK 1  *
+!*************************
+
+!>>>>> MODIFY NODES <<<<<<
+*DO, delta1, h_struts, 2*h_struts, 100
+*DO, delta2, delta1, 2*h_struts, 100 !avoid 'M' configuration
+/PREP7  
+NMODIF,9,bottom_chord*2,delta1,0   
+NMODIF,10,bottom_chord*3,delta2,0  
+NMODIF,11,bottom_chord*4,delta1,0  
+NMODIF,21,bottom_chord*2,delta1,o_struts   
+NMODIF,22,bottom_chord*3,delta2,o_struts   
+NMODIF,23,bottom_chord*4,delta1,o_struts   
+ 
+!>>>> SOLUTION <<<<
+/SOLU
+NLGEOM,ON
+SOLCONTROL,ON
+TIME,1
+PIVCHECK,OFF
+SOLVE
+
+!>>>> POST-PROCESS <<<<
+/POST1
+*GET,UMAX9,NODE,9,U,Y
+*GET,UMAX10,NODE,10,U,Y
+*GET,UMAX11,NODE,11,U,Y
+
+!>>>>> WRITE THE FILE <<<<<<
+*CFOPEN,umax,txt,,APPEND
+*VWRITE,delta1,delta2,UMAX9,UMAX10,UMAX11
+(F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+FINISH
+PARSAV,SCALAR, PARAMETRI, PARM
+PARRES,NEW, PARAMETRI, PARM
+*ENDDO 
+*ENDDO

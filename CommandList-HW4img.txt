@@ -1,0 +1,532 @@
+!*********************
+! PROBLEM HOMEWORK 4 *
+!*********************
+
+FINISH
+/CLEAR, START, NEW
+/TITLE, HOMEWORK 4
+/FILNAME,HOMEWORK4
+/EFACET, 4
+/GFILE, 2400
+/PLOTS,DATE,0
+/PNUM,AREA,1
+/ESHAPE,1
+! >>> PARAMETERS MODEL <<<
+*SET,leng_v_pipe,500
+*SET,diameter_v_pipe,100
+*SET,thick_v_pipe, 2
+*SET,leng_h_pipe,1000
+*SET,diameter_h_pipe,200
+*SET,thick_h_pipe,4
+*SET,alpha,90
+*SET,EPS,1E-3
+*SET,n_div_area,3
+
+! >>> PROPERTIES MATERIAL <<<
+*SET,E_Young, 210000
+*SET,ni,0.3
+
+! >>> LOAD <<<
+*SET,PRESSURE,1
+
+! >>> PRE PROCESSING <<<
+/PREP7
+ET,1,SHELL181
+KEYOPT,1,8,2
+SECTYPE,1,shell
+SECDATA,thick_h_pipe
+MP,EX,1,E_Young
+MP,PRXY,1,ni
+
+ET,2,SHELL181
+KEYOPT,2,8,2
+SECTYPE,2,shell
+SECDATA,thick_v_pipe
+MP,EX,2,E_Young
+MP,PRXY,2,ni
+
+TYPE,1
+SECNUM,1
+MAT,1
+SAVE
+
+! >>> DEFINE RF CYLINDRICAL <<<
+CLOCAL,100,CYLIN,0,diameter_h_pipe/2,0,,-alpha
+CSYS,0
+CLOCAL,200,CYLIN,0,0,0,,,alpha
+
+!***VERTICAL PIPE
+CSYS,100
+K,1,diameter_v_pipe/2,0,-leng_v_pipe/10
+K,2,diameter_v_pipe/2,0,leng_v_pipe
+K,3,0,0,0
+K,4,0,0,leng_v_pipe
+L,1,2
+!***HORIZZONTAL PIPE
+CSYS,200
+K,5,diameter_h_pipe/2,-alpha,0
+K,6,diameter_h_pipe/2,-alpha,leng_h_pipe/2
+K,7,0,0 
+K,8,0,0,leng_h_pipe/2
+L,5,6
+!***GEN AREA H PIPE
+AROTAT,2,,,,,,8,7,-2*alpha
+!***GEN AREA V PIPE
+CSYS,100
+AROTAT,1,,,,,,3,4,alpha
+SAVE
+/VIEW,1,1,1,1   
+/ANG,1  
+/REP,FAST 
+APLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-Geometry_1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+APTN,2,3
+ADELE,4,5
+LDELE,10
+LDELE,15
+LDELE,16
+SAVE
+/VIEW,1,1,1,1   
+/ANG,1  
+/REP,FAST 
+APLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-Geometry_2, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+CSYS,0
+WPOFFS,-50,100
+WPROTA,,250
+ASBW,7
+WPOFFS,50,-10
+WPROTA,,-250
+WPROTA,,,90
+WPOFFS,,,64.3
+ASBW,3
+WPROTA,,90
+WPOFFS,,,-10
+ASBW,6
+SAVE
+APLOT
+/VIEW,1,1,1,-1  
+/ANG,1  
+/REP,FAST 
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-Geometry_3, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+! >>> MESHING <<<
+LCCAT,16,21
+LCCAT,15,21
+AESIZE,ALL,n_div_area
+
+!***HORIZZONTAL PIPE
+ESYS,200
+TYPE,1
+SECNUM,1
+MSHKEY,1
+MSHAPE,0,2D
+AMESH,4
+AMESH,5
+AMESH,2
+AMESH,1
+SAVE
+
+!***VERTICAL PIPE
+ESYS,100
+SAVE
+TYPE,2
+SECNUM,2
+SAVE
+MSHKEY,1
+MSHAPE,0,2D
+AMESH,7
+AMESH,3
+SAVE    
+/VIEW,1,1,1,-1  
+/ANG,1  
+/REP,FAST 
+EPLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-Mesh, bmp
+/ZOOM,1,RECT,0.402292,0.0810089 ,0.829253289749 ,-0.158902069935  
+/REPLOT   
+/IMAGE, SAVE, HW4-Mesh-Zoom, bmp
+/REPLOT
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15
+/VIEW,1,1,1,-1
+/AUTO,1
+/REPLOT    
+
+! >>> VERIFY THE NORMAL VERSOR <<<
+/PSYMB,ESYS,1
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-NormSurf, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+CSYS,0
+! >>> SOLUTION <<<
+SAVE
+SFE,ALL,,PRES,,PRESSURE
+/PBC,ALL,,1
+LSEL,S,LINE,,20
+LSEL,A,LINE,,24
+LSEL,A,LINE,,10
+LSEL,A,LINE,,1
+LSEL,A,LINE,,5
+NSLL,S,1
+DSYM,SYMM,x
+
+LSEL,S,LINE,,8
+LSEL,A,LINE,,2
+LSEL,A,LINE,,19
+LSEL,A,LINE,,7
+LSEL,A,LINE,,23
+NSLL,S,1
+DSYM,SYMM,z
+
+LSEL,A,LINE,,9
+LSEL,A,LINE,,4
+LSEL,A,LINE,,6
+NSLL,S,1
+D,ALL,UX,0
+
+LSEL,S,LINE,,11
+NSLL,S,1
+D,ALL,UY,0
+ALLSEL,ALL
+/SOLU
+SOLVE
+FINISH
+
+! >>> POSTPROCESSING <<<
+/POST1
+RSYS,0
+PLDISP,1
+
+SHELL,MID
+RSYS,SOLU
+
+PLNSOL,S,x
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-SolutionSX, bmp
+/ZOOM,1,RECT,0.402292,0.0810089 ,0.829253289749 ,-0.158902069935  
+/REPLOT   
+/IMAGE, SAVE, HW4-SolutionSX-Zoom, bmp
+/REPLOT
+/VIEW,1,1,1,1
+/AUTO,1 
+/REP,FAST     
+/ZOOM,1,RECT,0.371127,-0.542136 ,0.754457140811 ,-0.74154299303 
+/IMAGE, SAVE, HW4-SolutionSX-Zoom2, bmp
+/VIEW,1,,,1 
+/ANG,1  
+/REP,FAST  
+/IMAGE, SAVE, HW4-SolutionSX-Zoom3, bmp   
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/VIEW,1,1,1,-1
+/AUTO,1
+/REPLOT  
+
+PLNSOL,S,y
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW4-SolutionSY, bmp
+/ZOOM,1,RECT,0.402292,0.0810089 ,0.829253289749 ,-0.158902069935  
+/REPLOT   
+/IMAGE, SAVE, HW4-SolutionSY-Zoom, bmp
+/REPLOT
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/VIEW,1,1,1,-1
+/AUTO,1
+/REPLOT
+
+PRNSOL,S,comp
+SAVE
+
+! >>> JUNCTION MEMBRANE STRESS <<<
+SHELL,MID
+RSYS,SOLU
+LSEL,S,LINE,,14
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sx,ARRAY,nnodi
+*DIM,sy,ARRAY,nnodi
+*DIM,zn,ARRAY,nnodi
+*DIM,xn,ARRAY,nnodi
+cm,nodi,node
+*DO,i,1,nnodi
+ *GET,xmin,node,,mnloc,x
+ NSEL,r,loc,x,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ zn(i)=nz(nmin)
+ xn(i)=xmin
+ *GET,sx(i),node,nmin,s,x
+ *GET,sy(i),node,nmin,s,y
+ CMSEL,S,nodi
+ nsel,u,node,,nmin
+ cm,nodi,node
+*ENDDO
+*CFOPEN,ResultMembraneJunction,txt
+*VWRITE 
+ (7x,'zn',18x,'xn',18x,'sx',18x,'sy')
+*vwrite,zn(1),xn(1),sx(1),sy(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+
+SHELL,BOT
+RSYS,SOLU
+LSEL,S,LINE,,14
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sxt,ARRAY,nnodi
+*DIM,syt,ARRAY,nnodi
+*DIM,sxb,ARRAY,nnodi
+*DIM,syb,ARRAY,nnodi
+cm,nodi,node
+ *DO,i,1,nnodi
+ *GET,xmin,node,,mnloc,x
+ NSEL,R,LOC,x,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ *GET,sxt(i),node,nmin,s,x
+ *GET,syt(i),node,nmin,s,y
+ sxb(i)=sxt(i)-sx(i)
+ syb(i)=syt(i)-sy(i)
+ zn(i)=nz(nmin)
+ xn(i)=xmin
+ CMSEL,S,nodi
+ NSEL,U,node,,nmin
+ cm,nodi,node
+*ENDDO
+*CFOPEN,JunctionBendingStress,txt
+*VWRITE 
+ (7x,'zn',18x,'xn',18x,'sxb',18x,'syb')
+*vwrite,zn(1),xn(1),sxb(1),syb(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+*DEL,ALL
+
+! >>> HORIZZONTAL PIPE <<<
+LSEL,S,LINE,,8
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sx,array,nnodi
+*DIM,sy,array,nnodi
+*DIM,sxt,array,nnodi
+*DIM,syt,array,nnodi
+*DIM,sxb,array,nnodi
+*DIM,syb,array,nnodi
+*DIM,pos,array,nnodi
+cm,nodi,node
+*DO,i,1,nnodi
+ *GET,xmin,node,,mnloc,x
+ NSEL,R,LOC,x,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ s1=nx(nmin)
+ pos(i)=s1
+ shell,mid
+ rsys,solu
+ *GET,sx(i),node,nmin,s,x
+ *GET,sy(i),node,nmin,s,y
+ SHELL,BOT
+ RSYS,SOLU
+ *GET,sxt(i),node,nmin,s,x
+ *GET,syt(i),node,nmin,s,y
+ sxb(i)=sxt(i)-sx(i)
+ syb(i)=syt(i)-sy(i)
+ CMSEL,S,nodi
+ NSEL,U,node,,nmin
+ CM,NODI,node
+*ENDDO
+*CREATE,ANSUITMP
+*CFOPEN,'HorizzontalStress1','txt',''
+*VWRITE 
+ (7x,'pos',18x,'sx',18x,'sy',18x,'sxb',18x,'syb')
+*VWRITE,pos(1),sx(1),sy(1),sxb(1),syb(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+*END
+/INPUT,ANSUITMP
+*DEL,ALL
+
+LSEL,S,LINE,,19
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sx,array,nnodi
+*DIM,sy,array,nnodi
+*DIM,sxt,array,nnodi
+*DIM,syt,array,nnodi
+*DIM,sxb,array,nnodi
+*DIM,syb,array,nnodi
+*DIM,pos,array,nnodi
+cm,nodi,node
+*DO,i,1,nnodi
+ *GET,xmin,node,,mxloc,x
+ NSEL,R,LOC,X,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ s1=nx(nmin)
+ pos(i)=s1
+ SHELL,MID
+ RSYS,SOLU
+ *GET,sx(i),node,nmin,s,x
+ *GET,sy(i),node,nmin,s,y
+ SHELL,BOT
+ RSYS,SOLU
+ *GET,sxt(i),node,nmin,s,x
+ *GET,syt(i),node,nmin,s,y
+ sxb(i)=sxt(i)-sx(i)
+ syb(i)=syt(i)-sy(i)
+ CMSEL,S,nodi
+ NSEL,U,node,,nmin
+ cm,nodi,node
+*ENDDO
+*CREATE,ANSUITMP
+*CFOPEN,'HorizzontalStress2','txt',''
+*VWRITE
+ (7x,'pos',18x,'sx',18x,'sy',18x,'sxb',18x,'syb')
+*VWRITE,pos(1),sx(1),sy(1),sxb(1),syb(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+*END
+/INPUT,ANSUITMP
+*DEL,ALL
+
+! >>> VERTICAL PIPE <<<
+LSEL,S,LINE,,7
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sx,array,nnodi
+*DIM,sy,array,nnodi
+*DIM,sxt,array,nnodi
+*DIM,syt,array,nnodi
+*DIM,sxb,array,nnodi
+*DIM,syb,array,nnodi
+*DIM,pos,array,nnodi
+cm,nodi,node
+*DO,i,1,nnodi
+ *GET,xmin,node,,mxloc,x
+ NSEL,R,LOC,X,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ s1=ny(nmin)
+ pos(i)=s1
+ SHELL,MID
+ RSYS,SOLU
+ *GET,sx(i),node,nmin,s,x
+ *GET,sy(i),node,nmin,s,y
+ SHELL,BOT
+ RSYS,SOLU
+ *GET,sxt(i),node,nmin,s,x 
+ *GET,syt(i),node,nmin,s,y
+ sxb(i)=sxt(i)-sx(i)
+ syb(i)=syt(i)-sy(i)
+ CMSEL,S,nodi
+ NSEL,U,node,,nmin
+ cm,nodi,node
+*ENDDO
+*CREATE,ANSUITMP
+*CFOPEN,'VerticalStress1','txt',''
+*VWRITE
+ (7x,'pos',18x,'sx',18x,'sy',18x,'sxb',18x,'syb')
+*VWRITE,pos(1),sx(1),sy(1),sxb(1),syb(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+*END
+/INPUT,ANSUITMP
+*DEL,ALL
+
+LSEL,S,LINE,,23
+NSLL,S,1
+*GET,nnodi,node,,count
+*DIM,sx,array,nnodi
+*DIM,sy,array,nnodi
+*DIM,sxt,array,nnodi
+*DIM,syt,array,nnodi
+*DIM,sxb,array,nnodi
+*DIM,syb,array,nnodi
+*DIM,pos,array,nnodi
+cm,nodi,node
+*DO,i,1,nnodi
+ *GET,xmin,node,,mxloc,x
+ NSEL,R,LOC,X,xmin-EPS,xmin+EPS
+ *GET,nmin,node,,num,max
+ s1=ny(nmin)
+ pos(i)=s1
+ SHELL,MID
+ RSYS,SOLU
+ *GET,sx(i),node,nmin,s,x
+ *GET,sy(i),node,nmin,s,y
+ SHELL,BOT
+ RSYS,SOLU
+ *GET,sxt(i),node,nmin,s,x
+ *GET,syt(i),node,nmin,s,y
+ sxb(i)=sxt(i)-sx(i)
+ syb(i)=syt(i)-sy(i)
+ CMSEL,S,nodi
+ NSEL,U,node,,nmin
+ cm,nodi,node
+*ENDDO
+*CREATE,ANSUITMP
+*CFOPEN,'VerticalStress2','txt',''
+*VWRITE
+ (7x,'pos',18x,'sx',18x,'sy',18x,'sxb',18x,'syb')
+*VWRITE,pos(1),sx(1),sy(1),sxb(1),syb(1)
+(F20.10,F20.10,F20.10,F20.10,F20.10)
+*CFCLOS
+*END
+/INPUT,ANSUITMP
+FINISH
+/EXIT,ALL

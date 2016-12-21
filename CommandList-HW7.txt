@@ -1,0 +1,280 @@
+!*********************
+! PROBLEM HOMEWORK 7 *
+!*********************
+
+FINISH
+/CLEAR, START, NEW
+/CWD,'E:\Homework\HW7\Part1'
+/TITLE, SHAFT CARRYING(WITHOUT RELIEF GROOVE)
+/FILNAME,HOMEWORK7part1,1
+/EFACET,4
+/GFILE,2400
+/PLOPTS,DATE,0 
+! >>> PARAMETERS MODEL <<<
+*SET, Pi, ACOS(-1)
+*SET, D, 90
+*SET, d1, D/(1.4)
+*SET, r1, d1/20
+*SET, R, (D-d1)/2
+*SET, n_div_a, 3*4
+*SET, n_div_b, 2*4
+*SET, n_div_c, 3*4
+*SET, EPS, 1E-3
+
+! >>> PROPERTIES MATERIAL <<<   
+*SET,E_Young, 210000 ! modulo di Young , MPa
+*SET,ni,0.3          ! coefficiente di Poisson 
+
+! >>>  LOAD <<<
+*SET, Mf,  100000
+*SET, Mt, 1000000
+
+! >>> MOMENT INERTIA <<<
+*SET, J, (Pi*d1**4)/64
+*SET, sigma_max, Mf/J*(d1/2)
+
+! >>> PRE PROCESSING <<<
+/PREP7
+
+ET,1,PLANE25,,,,,,2
+MP,EX,1,E_Young 
+MP,PRXY,1,ni
+
+K,1,0,0,0
+K,2,D/2-((D-d1))/2+r1,0,0
+K,3,D/2,0,0
+K,4,D/2,d1,0
+K,5,D/2-((D-d1))/2+r1,d1,0
+K,6,D/2-((D-d1))/2,d1,0
+K,7,D/2-((D-d1)/2),d1+r1 
+K,8,d1/2,2*d1
+K,9,0,2*d1,0
+K,10,0,d1+r1
+K,11,0,d1/2,0
+K,12,D/2-((D-d1))/2+r1,d1/2,0
+K,13,D/2,d1/2,0
+SAVE
+
+LSTR,       1,       2  
+LSTR,       2,       3  
+LSTR,       3,      13  
+LSTR,      13,       4  
+LSTR,       4,       5  
+LSTR,       7,       8  
+LSTR,       8,       9  
+LSTR,       9,      10  
+LSTR,      10,      11  
+LSTR,      11,       1  
+LSTR,      11,      12  
+LSTR,      10,       7  
+LSTR,       5,      12  
+LSTR,      12,       2
+LSTR,      12,      13   
+LARC,7,5,6,-r1 
+SAVE
+/PNUM,LINE,1
+LPLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT   
+/IMAGE, SAVE, HW7-Geometry_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+AL,1,14,11,10
+AL,2,3,15,14
+AL,15,4,5,13
+AL,9,11,12,13,16
+AL,12,8,7,6
+
+/PNUM,LINE,0
+/PNUM,AREA,1
+APLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-Area_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+LESIZE,11,,,n_div_a
+LESIZE,12,,,n_div_b,1/3
+LESIZE,13,,,n_div_b,3
+LESIZE,9,,,n_div_b
+LESIZE,16,,,n_div_b+n_div_a
+LCCAT,9,11
+LESIZE,10,,,n_div_b
+LESIZE,1,,,n_div_a
+LESIZE,14,,,n_div_b
+LESIZE,2,,,n_div_a
+LESIZE,3,,,n_div_b
+LESIZE,15,,,n_div_a
+LESIZE,4,,,n_div_b,1/3
+LESIZE,5,,,n_div_a
+LESIZE,6,,,n_div_b
+LESIZE,7,,,n_div_b,3
+LESIZE,8,,,n_div_b
+MSHKEY,1 
+MSHAPE,0,2D
+AMESH,ALL
+SAVE
+
+EPLOT
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-Mesh_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+! >>>  WRITE FILE <<<
+*GET,Xnode,NODE,506,LOC,X
+*CREATE,ansuitmp
+*CFOPEN,temp,txt,,
+*VWRITE,%506%,Xnode
+(F5.0,F20.10)
+*DO,i,513,507,-1
+ *GET,Xnode_i,NODE,i,LOC,X
+ *VWRITE,i,Xnode_i
+ (F5.0,F20.10)
+*ENDDO
+*GET,Xnodelast,NODE,498,LOC,X 
+*VWRITE,%498%,Xnodelast
+(F5.0,F20.10)
+*CFCLOS
+*END
+/INPUT,ansuitmp
+
+! >>> SOLUTION <<<
+/SOLU
+ANTYPE,STATIC 
+! >>> CONSTRAINT <<<
+NSEL,S,LOC,Y,-EPS,EPS
+D,ALL,uy,0
+NSEL,R,LOC,X,(D/2)-EPS,(D/2)+EPS
+D,ALL,ux,0
+ALLSEL,ALL
+
+! >>> BENDING <<< 
+MODE,1,1            
+nsel,s,loc,y,(2*d1)-eps,(2*d1)+eps
+SFGRAD,PRES,0,X,0,sigma_max/(d1/2)
+SF,ALL,PRES,0       
+ALLSEL,ALL
+LSWRITE,1
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-LoadBendMoment_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+! >>> TORQUE <<<
+LSCLEAR,ALL 
+MODE,0
+
+NSEL,S,LOC,Y,-EPS,EPS
+D,ALL,uy,0
+NSEL,R,LOC,X,(D/2)-EPS,(D/2)+EPS
+D,ALL,ux,0
+ALLSEL
+NSEL,S,LOC,Y,-EPS,EPS
+D,ALL,uz,0
+ALLSEL
+
+*DIM,force,TABLE,n_div_b+1,,,X
+*TREAD,force,torsion,txt
+NSEL,S,LOC,y,(2*d1)-EPS,(2*d1)+EPS
+F,ALL,FZ, %force% 
+ALLSEL,ALL
+LSWRITE,2
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-LoadTorsion_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+LSSOLVE,1,2
+FINISH
+
+! >>> POST-PROCESS <<<
+/VIEW,1,,,1 
+/ANG,1  
+/REP,FAST   
+/AUTO,1 
+/REP,FAST   
+
+/POST1
+SET,1,1,,,,180
+PLNSOL,S,1
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-MaxFirstStressBendingMoment_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+SET,2,1
+PLNSOL,S,1
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-MaxFirstStressTorsionMoment_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+
+!superposition of the two loading cases
+SET,1,1,,,,180
+LCWRITE,1
+SET,2,1,,,,180
+LCOPER,ADD,1
+LCWRITE,1
+PLNSOL,S,1
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14   
+/RGB,INDEX, 0, 0, 0,15   
+/REPLOT
+/IMAGE, SAVE, HW7-MaxFirstStressCombMoment_PART1, bmp
+/RGB,INDEX, 0, 0, 0, 0  
+/RGB,INDEX, 60, 60, 60,13   
+/RGB,INDEX, 80, 80, 80,14   
+/RGB,INDEX,100,100,100,15   
+/REPLOT 
+FINISH
+QUIT
