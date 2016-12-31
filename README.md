@@ -18,11 +18,10 @@ Collection of all exercize develop in APDL in Ansys
 
 Legend name's file:
 <ul>
- <li>CommandList-HW**_X_** - exercise number</li>
- <li>**_img_**  - the script automatize the generation of image file</li>
- <li>**_"modify"_** - the script have little change repsect original</li>
+ <li>CommandList-HW "x" exercise number</li> 
+ <li>"img" - the script automatize the generation of image file</li>
+ <li>"modify" - the script have little change repsect original</li>
 </ul>
 
 The result are aviable in this repository:
 [Report - MechanicalDesignMachineElements](https://github.com/frank1789/Report-MechanicalDesignMachineElements)
-  
